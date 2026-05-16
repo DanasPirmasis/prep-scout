@@ -1,24 +1,19 @@
-from contextlib import asynccontextmanager
+import asyncio
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from fastapi import FastAPI
 
 from app.scraper.runner import run_scraper
 
-app = FastAPI()
 
-
-scheduler = AsyncIOScheduler()
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+async def main():
+    scheduler = AsyncIOScheduler()
     scheduler.add_job(run_scraper, "cron", hour=2)
     scheduler.start()
-    yield
-    scheduler.shutdown()  # cleanup on shutdown
+    try:
+        await asyncio.Event().wait()
+    finally:
+        scheduler.shutdown()
 
 
-@app.get("/")
-async def read_root():
-    return {"message": "Hello World"}
+if __name__ == "__main__":
+    asyncio.run(main())
