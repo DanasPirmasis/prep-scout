@@ -1,8 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
-from db.models.products import Product
+from app.models.products import Product
 
 
 def get_by_external_id(

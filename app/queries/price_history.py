@@ -1,8 +1,8 @@
 from datetime import datetime, timezone
 
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
-from db.models.price_history import PriceHistory
+from app.models.price_history import PriceHistory
 
 
 def record(

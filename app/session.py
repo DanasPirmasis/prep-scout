@@ -1,7 +1,6 @@
 import os
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlmodel import Session, create_engine
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
@@ -9,4 +8,3 @@ DATABASE_URL = os.environ.get(
 )
 
 engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(engine, expire_on_commit=False)
