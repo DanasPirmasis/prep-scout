@@ -1,2 +1,4 @@
 def run_scraper():
-    pass
+    print("Starting scraping run")
+
+    print("Scraping complete.")
