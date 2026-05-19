@@ -7,7 +7,7 @@ class CategoryName(TypedDict):
     en: str
 
 
-class LastMileCategory(TypedDict):
+class LastMileCategoryPayload(TypedDict):
     id: str
     name: CategoryName
     icon: str
@@ -35,7 +35,7 @@ class LastMileCategory(TypedDict):
 
 
 class LastMileCategoriesResponse(TypedDict):
-    data: list[LastMileCategory]
+    data: list[LastMileCategoryPayload]
     count: int
 
 
@@ -73,7 +73,7 @@ class ProductDimensions(TypedDict):
     height: float
 
 
-class LastMileProduct(TypedDict):
+class LastMileProductPayload(TypedDict):
     id: str
     _id: str
     categoryId: str
@@ -122,7 +122,7 @@ class LastMileProduct(TypedDict):
 
 
 class LastMileProductEntry(TypedDict):
-    frontEndProduct: LastMileProduct
+    frontEndProduct: LastMileProductPayload
     position: int
     karmaAdjustment: int
 

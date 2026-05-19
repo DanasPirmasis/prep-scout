@@ -67,7 +67,7 @@ PostgreSQL accessed via SQLModel (SQLAlchemy + Pydantic). One table:
 
 ### Session management
 
-`app/session.py` provides a `get_session` generator for use as a FastAPI dependency. The database URL defaults to `postgresql+psycopg://postgres:postgres@localhost:5433/prep_scout` and can be overridden with the `DATABASE_URL` env var.
+`app/session.py` provides a `session_scope` context manager that yields a `Session`. The database URL defaults to `postgresql+psycopg://postgres:postgres@localhost:5433/prep_scout` and can be overridden with the `DATABASE_URL` env var.
 
 ### Key environment variables
 

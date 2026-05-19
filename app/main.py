@@ -1,9 +1,15 @@
+import logging
+
 # from apscheduler.schedulers.blocking import BlockingScheduler
 
 from app.scraper.runner import run_scraper
 
 
-def main():
+def main() -> None:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    )
     run_scraper()
     # scheduler = BlockingScheduler()
     # scheduler.add_job(run_scraper, "cron", hour=2)

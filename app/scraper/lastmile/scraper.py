@@ -1,14 +1,16 @@
 import base64
 import json
+import logging
 import os
+from collections import deque
 from typing import cast
 
 from dotenv import load_dotenv
 from oxylabs import RealtimeClient
 from sqlmodel import Session
 
-from app.models.lastmile_category import LastMileCategory as LastMileCategoryModel
-from app.models.lastmile_product import LastMileProduct as LastMileProductModel
+from app.models.lastmile_category import LastMileCategory
+from app.models.lastmile_product import LastMileProduct
 from app.models.products import Product
 from app.queries import lastmile_category as lastmile_category_queries
 from app.queries import lastmile_product as lastmile_product_queries
@@ -20,13 +22,21 @@ from app.scraper.lastmile.types import (
 
 load_dotenv()
 
+logger = logging.getLogger(__name__)
+
 username = os.getenv("OXYLABS_USERNAME")
 password = os.getenv("OXYLABS_PASSWORD")
 
 
-def scrape_lastmile(session: Session):
+class MissingCredentialsError(RuntimeError):
+    pass
+
+
+def scrape_lastmile(session: Session) -> None:
     if username is None or password is None:
-        raise Exception("OxyLabs credentials not found in environment variables.")
+        raise MissingCredentialsError(
+            "OxyLabs credentials not found in environment variables."
+        )
 
     client = RealtimeClient(username, password)
     categories = _get_categories(client)
@@ -39,23 +49,23 @@ def scrape_lastmile(session: Session):
         _save_products(session, products_response)
 
 
-def _save_products(session: Session, data: LastMileProductsResponse):
+def _save_products(session: Session, data: LastMileProductsResponse) -> None:
     for entry in data["products"]:
         p = entry["frontEndProduct"]
-        product = LastMileProductModel(
+        product = LastMileProduct(
             id=p["id"],
-            internal_id=p["_id"],
-            category_id=p["categoryId"],
-            chain_id=p["chainId"],
-            constraint_code=p["constraintCode"],
-            conversion_measure=p["conversionMeasure"],
+            internal_id=p.get("_id", ""),
+            category_id=p.get("categoryId", ""),
+            chain_id=p.get("chainId", ""),
+            constraint_code=p.get("constraintCode", ""),
+            conversion_measure=p.get("conversionMeasure", ""),
             conversion_to_kg=p["conversionToKg"],
             conversion_value=p["conversionValue"],
-            country_of_origin=p["countryOfOrigin"],
-            date_created=p["dateCreated"],
+            country_of_origin=p.get("countryOfOrigin", ""),
+            date_created=p.get("dateCreated", ""),
             deposit_price=p["depositPrice"],
             dimensions=dict(p["dimensions"]),
-            erp_code=p["erpCode"],
+            erp_code=p.get("erpCode", ""),
             has_nutritions=p["hasNutritions"],
             is_active=p["isActive"],
             is_approved=p["isApproved"],
@@ -65,9 +75,9 @@ def _save_products(session: Session, data: LastMileProductsResponse):
             last_month_lowest_price=p["lastMonthLowestPrice"],
             maximum_order_quantity=p["maximumOrderQuantity"],
             actual_price=p["actualPrice"],
-            photo_url=p["photoUrl"],
-            thumb_url=p["thumbUrl"],
-            product_id=p["productId"],
+            photo_url=p.get("photoUrl", ""),
+            thumb_url=p.get("thumbUrl", ""),
+            product_id=p.get("productId", ""),
             prc=dict(p["prc"]),
             cost_price=dict(p["costPrice"]),
             promo=p["promo"],
@@ -75,9 +85,9 @@ def _save_products(session: Session, data: LastMileProductsResponse):
             slugs=p["slugs"],
             standard_order_quantity=p["standardOrderQuantity"],
             store_ids=p["storeIds"],
-            supplier=p["supplier"],
+            supplier=p.get("supplier", ""),
             tags=p["tags"],
-            unit_of_measure=p["unitOfMeasure"],
+            unit_of_measure=p.get("unitOfMeasure", ""),
             unit_weight=p["unitWeight"],
             name_lt=p["name"].get("lt", ""),
             name_en=p["name"].get("en", ""),
@@ -106,18 +116,18 @@ def _save_products(session: Session, data: LastMileProductsResponse):
                     external_id=p["id"],
                     store="lastmile",
                     name=p["name"].get("lt", ""),
-                    brand=p["supplier"],
-                    category=p["categoryId"],
-                    unit=p["unitOfMeasure"],
-                    comparative_unit=p["conversionMeasure"],
+                    brand=p.get("supplier", ""),
+                    category=p.get("categoryId", ""),
+                    unit=p.get("unitOfMeasure", ""),
+                    comparative_unit=p.get("conversionMeasure", ""),
                     price=p["actualPrice"],
                 ),
             )
 
 
-def _save_categories(session: Session, data: LastMileCategoriesResponse):
+def _save_categories(session: Session, data: LastMileCategoriesResponse) -> None:
     for api_category in data["data"]:
-        category = LastMileCategoryModel(
+        category = LastMileCategory(
             id=api_category["id"],
             name_lt=api_category["name"].get("lt", ""),
             name_en=api_category["name"].get("en", ""),
@@ -149,7 +159,7 @@ def _save_categories(session: Session, data: LastMileCategoriesResponse):
             lastmile_category_queries.save_category(session, category)
 
 
-def _get_categories(client: RealtimeClient):
+def _get_categories(client: RealtimeClient) -> LastMileCategoriesResponse:
     body = {
         "params": {
             "type": "categories",
@@ -203,9 +213,9 @@ def _build_category_tree(data: LastMileCategoriesResponse) -> dict[str, list[str
     category_tree: dict[str, list[str]] = {}
     for top_level_category in top_level_categories:
         all_descendant_ids: list[str] = []
-        bfs_queue = [top_level_category["id"]]
+        bfs_queue: deque[str] = deque([top_level_category["id"]])
         while bfs_queue:
-            current_category_id = bfs_queue.pop(0)
+            current_category_id = bfs_queue.popleft()
             direct_children_ids = children_by_parent_id.get(current_category_id, [])
             all_descendant_ids.extend(direct_children_ids)
             bfs_queue.extend(direct_children_ids)
@@ -214,7 +224,9 @@ def _build_category_tree(data: LastMileCategoriesResponse) -> dict[str, list[str
     return category_tree
 
 
-def _get_products_in_category(client: RealtimeClient, parent_id: str):
+def _get_products_in_category(
+    client: RealtimeClient, parent_id: str
+) -> LastMileProductsResponse:
     body = {
         "params": {
             "type": "view_products",
