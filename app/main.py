@@ -1,19 +1,14 @@
-import asyncio
-
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+# from apscheduler.schedulers.blocking import BlockingScheduler
 
 from app.scraper.runner import run_scraper
 
 
-async def main():
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(run_scraper, "cron", hour=2)
-    scheduler.start()
-    try:
-        await asyncio.Event().wait()
-    finally:
-        scheduler.shutdown()
+def main():
+    run_scraper()
+    # scheduler = BlockingScheduler()
+    # scheduler.add_job(run_scraper, "cron", hour=2)
+    # scheduler.start()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
