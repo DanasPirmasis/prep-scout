@@ -1,5 +1,5 @@
 import os
-from collections.abc import Iterator
+from collections.abc import Generator
 from contextlib import contextmanager
 
 from sqlmodel import Session, create_engine
@@ -13,6 +13,6 @@ engine = create_engine(DATABASE_URL)
 
 
 @contextmanager
-def session_scope() -> Iterator[Session]:
+def session_scope() -> Generator[Session]:
     with Session(engine) as session:
         yield session
