@@ -44,9 +44,22 @@ def scrape_lastmile(session: Session) -> None:
 
     _save_categories(session, categories)
 
+    total_categories = len(category_tree)
+    scraped_categories = 0
+
     for parent_id in category_tree:
         products_response = _get_products_in_category(client, parent_id)
         _save_products(session, products_response)
+        scraped_categories += 1
+
+    if total_categories > 0:
+        completeness = (scraped_categories / total_categories) * 100
+        logger.info(
+            "Scraped %d/%d categories (%.1f%%)",
+            scraped_categories,
+            total_categories,
+            completeness,
+        )
 
 
 def _save_products(session: Session, data: LastMileProductsResponse) -> None:
