@@ -12,7 +12,7 @@ class Product(SQLModel, table=True):
     external_id: str
     store: str
     name: str
-    brand: str
+    brand: str | None
     category: str
     unit: str
     comparative_unit: str

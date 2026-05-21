@@ -1,0 +1,2 @@
+class MissingCredentialsError(RuntimeError):
+    pass

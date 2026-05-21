@@ -1,8 +1,12 @@
 import logging
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # from apscheduler.schedulers.blocking import BlockingScheduler
 
-from app.scraper.runner import run_scraper
+from app.scraper.runner import run_scraper  # noqa: E402
 
 
 def main() -> None:

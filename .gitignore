@@ -33,3 +33,5 @@ env/
 
 # Alembic
 alembic/versions/*.pyc
+
+docs/responses
