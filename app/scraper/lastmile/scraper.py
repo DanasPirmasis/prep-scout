@@ -27,7 +27,7 @@ def scrape_lastmile(session_factory: SessionFactory, client: RealtimeClient) -> 
         return
     scraped_categories = 0
 
-    for parent_id in category_tree:
+    for scraped_categories, parent_id in enumerate(category_tree, start=1):
         # TODO: this should execute all of the requests at the same time.
         products_response = request.get_products_in_category(client, parent_id)
         for entry in products_response.products:
@@ -35,7 +35,6 @@ def scrape_lastmile(session_factory: SessionFactory, client: RealtimeClient) -> 
             with session_factory() as session:
                 save.last_mile_product(session, product)
                 save.product(session, product)
-        scraped_categories += 1
         _log_completeness(scraped_categories, total_categories)
 
 

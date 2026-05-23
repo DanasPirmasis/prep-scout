@@ -13,9 +13,7 @@ from app.scraper.lastmile.types import (
 
 
 def product(session: Session, data: LastMileProductPayload) -> None:
-    existing_product = product_queries.get_by_external_id(
-        session, external_id=data.id, store="lastmile"
-    )
+    existing_product = product_queries.get_by_external_id(session, external_id=data.id, store="lastmile")
     if existing_product is None:
         product_queries.save_product(
             session,

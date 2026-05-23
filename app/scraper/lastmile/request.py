@@ -45,9 +45,7 @@ def get_categories(client: RealtimeClient) -> LastMileCategoriesResponse:
 IKI_STORE_ID = "CvKfTzV4TN5U8BTMF1Hl"
 
 
-def get_products_in_category(
-    client: RealtimeClient, parent_id: str
-) -> LastMileProductsResponse:
+def get_products_in_category(client: RealtimeClient, parent_id: str) -> LastMileProductsResponse:
     body = {
         "params": {
             "type": "view_products",
