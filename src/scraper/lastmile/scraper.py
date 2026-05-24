@@ -1,8 +1,6 @@
 import logging
 from collections import deque
-from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from contextlib import AbstractContextManager
 
 from oxylabs import RealtimeClient
 from sqlmodel import Session
@@ -13,15 +11,11 @@ from src.scraper.lastmile.types import LastMileCategoriesResponse, LastMileProdu
 logger = logging.getLogger(__name__)
 
 
-SessionFactory = Callable[[], AbstractContextManager[Session]]
-
-
-def scrape_lastmile(session_factory: SessionFactory, client: RealtimeClient) -> None:
+def scrape_lastmile(session: Session, client: RealtimeClient) -> None:
     categories = request.get_categories(client)
     category_tree = _build_category_tree(categories)
 
-    with session_factory() as session:
-        save.categories(session, categories)
+    save.categories(session, categories)
 
     total_categories = len(category_tree)
     if total_categories == 0:
@@ -35,17 +29,16 @@ def scrape_lastmile(session_factory: SessionFactory, client: RealtimeClient) -> 
         for scraped_categories, future in enumerate(as_completed(products_by_category), start=1):
             parent_id = products_by_category[future]
             products_response = future.result()
-            _save_products(session_factory, products_response)
+            _save_products(session, products_response)
             logger.info("Scraped LastMile category %s", parent_id)
             _log_completeness(scraped_categories, total_categories)
 
 
-def _save_products(session_factory: SessionFactory, products_response: LastMileProductsResponse) -> None:
+def _save_products(session: Session, products_response: LastMileProductsResponse) -> None:
     for entry in products_response.products:
         product = entry.front_end_product
-        with session_factory() as session:
-            save.last_mile_product(session, product)
-            save.product(session, product)
+        save.last_mile_product(session, product)
+        save.product(session, product)
 
 
 def _log_completeness(scraped_categories: int, total_categories: int) -> None:

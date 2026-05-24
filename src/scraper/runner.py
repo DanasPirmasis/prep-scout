@@ -19,5 +19,6 @@ def run_scraper() -> None:
         raise MissingCredentialsError("OxyLabs credentials not found in environment variables.")
     client = RealtimeClient(username, password)
 
-    scrape_lastmile(session_scope, client)
+    with session_scope() as session:
+        scrape_lastmile(session, client)
     logger.info("Scraping complete.")
