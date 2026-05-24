@@ -10,5 +10,4 @@ def get_by_id(session: Session, product_id: str) -> LastMileProduct | None:
 def save_product(session: Session, product: LastMileProduct) -> LastMileProduct:
     session.add(product)
     session.commit()
-    session.refresh(product)
     return product
