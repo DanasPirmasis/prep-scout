@@ -1,8 +1,8 @@
 """initial tables
 
-Revision ID: df64ffff8b33
+Revision ID: 4d77420cb242
 Revises: 
-Create Date: 2026-05-19 19:00:22.700315
+Create Date: 2026-05-24 19:41:56.587938
 
 """
 from typing import Sequence, Union
@@ -10,10 +10,11 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 import sqlmodel
+import sqlmodel.sql.sqltypes
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'df64ffff8b33'
+revision: str = '4d77420cb242'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -32,21 +33,21 @@ def upgrade() -> None:
     sa.Column('thumb_url', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('rank', sa.Integer(), nullable=False),
     sa.Column('parent_id', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('store_ids', sa.JSON(), nullable=True),
+    sa.Column('store_ids', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('chain_id', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('chain_ids', sa.JSON(), nullable=True),
-    sa.Column('country_ids', sa.JSON(), nullable=True),
+    sa.Column('chain_ids', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('country_ids', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('picking_rank', sa.Integer(), nullable=False),
     sa.Column('show', sa.Boolean(), nullable=False),
-    sa.Column('mapping', sa.JSON(), nullable=True),
+    sa.Column('mapping', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('minimum_stock', sa.Integer(), nullable=True),
     sa.Column('date_last_refresh', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('slugs', sa.JSON(), nullable=True),
-    sa.Column('metadata', sa.JSON(), nullable=True),
-    sa.Column('seo_title', sa.JSON(), nullable=True),
-    sa.Column('seo_description', sa.JSON(), nullable=True),
-    sa.Column('category_description', sa.JSON(), nullable=True),
-    sa.Column('subcategories', sa.JSON(), nullable=True),
+    sa.Column('slugs', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('metadata', sa.String(), nullable=True),
+    sa.Column('seo_title', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('seo_description', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('category_description', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('subcategories', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('global_category_id', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('global_category_parent_id', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.PrimaryKeyConstraint('id')
@@ -63,7 +64,7 @@ def upgrade() -> None:
     sa.Column('country_of_origin', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('date_created', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('deposit_price', sa.Float(), nullable=False),
-    sa.Column('dimensions', sa.JSON(), nullable=True),
+    sa.Column('dimensions', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('erp_code', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('has_nutritions', sa.Boolean(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
@@ -77,15 +78,15 @@ def upgrade() -> None:
     sa.Column('photo_url', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('thumb_url', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('product_id', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('prc', sa.JSON(), nullable=True),
-    sa.Column('cost_price', sa.JSON(), nullable=True),
-    sa.Column('promo', sa.JSON(), nullable=True),
-    sa.Column('promo_tags', sa.JSON(), nullable=True),
-    sa.Column('slugs', sa.JSON(), nullable=True),
+    sa.Column('prc', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('cost_price', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('promo', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+    sa.Column('promo_tags', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('slugs', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('standard_order_quantity', sa.Integer(), nullable=False),
-    sa.Column('store_ids', sa.JSON(), nullable=True),
+    sa.Column('store_ids', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('supplier', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('tags', sa.JSON(), nullable=True),
+    sa.Column('tags', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('unit_of_measure', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('unit_weight', sa.Float(), nullable=False),
     sa.Column('name_lt', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
@@ -94,13 +95,13 @@ def upgrade() -> None:
     sa.Column('description_lt', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('description_en', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('description_ru', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('allergens', sa.JSON(), nullable=True),
-    sa.Column('storing_conditions', sa.JSON(), nullable=True),
-    sa.Column('ingredients', sa.JSON(), nullable=True),
-    sa.Column('manufacturer_contact', sa.JSON(), nullable=True),
-    sa.Column('safety_information', sa.JSON(), nullable=True),
-    sa.Column('product_label', sa.JSON(), nullable=True),
-    sa.Column('nutrition', sa.JSON(), nullable=True),
+    sa.Column('allergens', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('storing_conditions', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('ingredients', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('manufacturer_contact', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('safety_information', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('product_label', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('nutrition', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('products',
@@ -108,7 +109,7 @@ def upgrade() -> None:
     sa.Column('external_id', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('store', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('brand', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('brand', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
     sa.Column('category', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('unit', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('comparative_unit', sqlmodel.sql.sqltypes.AutoString(), nullable=False),

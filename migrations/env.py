@@ -1,5 +1,6 @@
 from logging.config import fileConfig
 
+import sqlmodel.sql.sqltypes  # noqa: F401
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
@@ -54,6 +55,14 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
+    connection = config.attributes.get("connection")
+    if connection is not None:
+        context.configure(connection=connection, target_metadata=target_metadata)
+
+        with context.begin_transaction():
+            context.run_migrations()
+        return
+
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",

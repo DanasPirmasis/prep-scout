@@ -1,3 +1,6 @@
+import json
+from typing import Any
+
 from sqlmodel import Session
 
 from src.models.lastmile_category import LastMileCategory
@@ -33,13 +36,14 @@ def product(session: Session, data: LastMileProductPayload) -> None:
 
 
 def last_mile_product(session: Session, payload: LastMileProductPayload) -> None:
-    last_mile_product = payload.model_dump()
+    payload_data = payload.model_dump()
 
-    name = last_mile_product.pop("name")
-    description = last_mile_product.pop("description")
+    name = payload_data.pop("name")
+    description = payload_data.pop("description")
+    product_data = _json_stringified_nested_values(payload_data)
 
     last_mile_product = LastMileProduct(
-        **last_mile_product,
+        **product_data,
         name_lt=name["lt"],
         name_en=name["en"],
         name_ru=name["ru"],
@@ -56,15 +60,24 @@ def last_mile_product(session: Session, payload: LastMileProductPayload) -> None
 
 def categories(session: Session, data: LastMileCategoriesResponse) -> None:
     for c in data.data:
-        payload = c.model_dump()
-        name = payload.pop("name")
-        payload["metadata_"] = payload.pop("metadata")
-        payload["date_last_refresh"] = str(payload["date_last_refresh"])
+        payload_data = c.model_dump()
+        name = payload_data.pop("name")
+        payload_data["metadata_"] = payload_data.pop("metadata")
+        payload_data["date_last_refresh"] = str(payload_data["date_last_refresh"])
+        category_data = _json_stringified_nested_values(payload_data)
         category = LastMileCategory(
-            **payload,
+            **category_data,
             name_lt=name["lt"],
             name_en=name["en"],
             name_ru=name["ru"],
         )
         if lastmile_category_queries.get_by_id(session, c.id) is None:
             save_entity(session, category)
+
+
+def _json_string(value: object) -> str:
+    return json.dumps(value, ensure_ascii=False, sort_keys=True)
+
+
+def _json_stringified_nested_values(payload: dict[str, Any]) -> dict[str, Any]:
+    return {key: _json_string(value) if isinstance(value, dict | list) else value for key, value in payload.items()}
