@@ -1,6 +1,5 @@
 from typing import ClassVar
 
-from sqlalchemy import JSON, Column
 from sqlmodel import Field, SQLModel
 
 
@@ -18,7 +17,7 @@ class LastMileProduct(SQLModel, table=True):
     country_of_origin: str
     date_created: str
     deposit_price: float
-    dimensions: dict = Field(sa_column=Column(JSON))
+    dimensions: str
     erp_code: str
     has_nutritions: bool
     is_active: bool
@@ -32,15 +31,15 @@ class LastMileProduct(SQLModel, table=True):
     photo_url: str
     thumb_url: str
     product_id: str
-    prc: dict = Field(sa_column=Column(JSON))
-    cost_price: dict = Field(sa_column=Column(JSON))
-    promo: dict | None = Field(default=None, sa_column=Column(JSON, nullable=True))
-    promo_tags: dict = Field(sa_column=Column(JSON))
-    slugs: list = Field(sa_column=Column(JSON))
+    prc: str
+    cost_price: str
+    promo: str | None = None
+    promo_tags: str
+    slugs: str
     standard_order_quantity: int
-    store_ids: list = Field(sa_column=Column(JSON))
+    store_ids: str
     supplier: str
-    tags: list = Field(sa_column=Column(JSON))
+    tags: str
     unit_of_measure: str
     unit_weight: float
     name_lt: str
@@ -49,10 +48,10 @@ class LastMileProduct(SQLModel, table=True):
     description_lt: str
     description_en: str
     description_ru: str
-    allergens: dict = Field(sa_column=Column(JSON))
-    storing_conditions: dict = Field(sa_column=Column(JSON))
-    ingredients: dict = Field(sa_column=Column(JSON))
-    manufacturer_contact: dict = Field(sa_column=Column(JSON))
-    safety_information: dict = Field(sa_column=Column(JSON))
-    product_label: dict = Field(sa_column=Column(JSON))
-    nutrition: dict = Field(sa_column=Column(JSON))
+    allergens: str
+    storing_conditions: str
+    ingredients: str
+    manufacturer_contact: str
+    safety_information: str
+    product_label: str
+    nutrition: str

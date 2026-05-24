@@ -1,6 +1,6 @@
 from typing import ClassVar
 
-from sqlalchemy import JSON, Column
+from sqlalchemy import Column, String
 from sqlmodel import Field, SQLModel
 
 
@@ -16,20 +16,20 @@ class LastMileCategory(SQLModel, table=True):
     thumb_url: str
     rank: int
     parent_id: str
-    store_ids: list = Field(sa_column=Column(JSON))
+    store_ids: str
     chain_id: str
-    chain_ids: list = Field(sa_column=Column(JSON))
-    country_ids: list = Field(sa_column=Column(JSON))
+    chain_ids: str
+    country_ids: str
     picking_rank: int
     show: bool
-    mapping: dict = Field(sa_column=Column(JSON))
+    mapping: str
     minimum_stock: int | None = None
     date_last_refresh: str
-    slugs: list = Field(sa_column=Column(JSON))
-    metadata_: dict = Field(sa_column=Column("metadata", JSON))
-    seo_title: dict = Field(sa_column=Column(JSON))
-    seo_description: dict = Field(sa_column=Column(JSON))
-    category_description: dict = Field(sa_column=Column(JSON))
-    subcategories: list = Field(sa_column=Column(JSON))
+    slugs: str
+    metadata_: str = Field(sa_column=Column("metadata", String))
+    seo_title: str
+    seo_description: str
+    category_description: str
+    subcategories: str
     global_category_id: str
     global_category_parent_id: str
