@@ -1,4 +1,4 @@
-.PHONY: lint lint-fix format format-check typecheck q
+.PHONY: lint lint-fix format format-check typecheck test q
 
 lint:
 	uv run ruff check .
@@ -14,5 +14,8 @@ format-check:
 
 typecheck:
 	uv run pyright
+
+test:
+	uv run pytest
 
 q: lint-fix format lint typecheck
