@@ -16,9 +16,11 @@ class LocalizedString(BaseModel):
 
 
 class ProductNutrition(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True, serialize_by_alias=True)
+
     energy: str
     fat: str
-    satFat: str
+    sat_fat: str
     carbs: str
     sugar: str
     protein: str
@@ -26,6 +28,8 @@ class ProductNutrition(BaseModel):
 
 
 class ProductPrice(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True, serialize_by_alias=True)
+
     p: float | None
     s: float | None
     l: float | None  # noqa: E741
@@ -37,6 +41,8 @@ class ProductPrice(BaseModel):
 
 
 class ProductDimensions(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True, serialize_by_alias=True)
+
     length: float
     width: float
     height: float

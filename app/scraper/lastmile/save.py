@@ -7,6 +7,7 @@ from app.models.store import Store
 from app.queries import lastmile_category as lastmile_category_queries
 from app.queries import lastmile_product as lastmile_product_queries
 from app.queries import products as product_queries
+from app.queries.base import save_entity
 from app.scraper.lastmile.types import (
     LastMileCategoriesResponse,
     LastMileProductPayload,
@@ -16,7 +17,7 @@ from app.scraper.lastmile.types import (
 def product(session: Session, data: LastMileProductPayload) -> None:
     existing_product = product_queries.get_by_external_id(session, external_id=data.id, store=Store.LASTMILE)
     if existing_product is None:
-        product_queries.save_product(
+        save_entity(
             session,
             Product(
                 external_id=data.id,
@@ -48,7 +49,7 @@ def last_mile_product(session: Session, payload: LastMileProductPayload) -> None
     )
 
     if lastmile_product_queries.get_by_id(session, last_mile_product.id) is None:
-        lastmile_product_queries.save_product(session, last_mile_product)
+        save_entity(session, last_mile_product)
 
     # Should create event here
 
@@ -66,4 +67,4 @@ def categories(session: Session, data: LastMileCategoriesResponse) -> None:
             name_ru=name["ru"],
         )
         if lastmile_category_queries.get_by_id(session, c.id) is None:
-            lastmile_category_queries.save_category(session, category)
+            save_entity(session, category)
