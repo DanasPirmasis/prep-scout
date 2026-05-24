@@ -2,9 +2,9 @@ import json
 
 from oxylabs import RealtimeClient
 
-from app.scraper import oxylabs
-from app.scraper.exceptions import EmptyResponseError
-from app.scraper.lastmile.types import (
+from src.scraper import oxylabs
+from src.scraper.exceptions import EmptyResponseError
+from src.scraper.lastmile.types import (
     LastMileCategoriesResponse,
     LastMileProductsResponse,
 )

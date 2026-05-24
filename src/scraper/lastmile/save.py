@@ -1,14 +1,14 @@
 from sqlmodel import Session
 
-from app.models.lastmile_category import LastMileCategory
-from app.models.lastmile_product import LastMileProduct
-from app.models.products import Product
-from app.models.store import Store
-from app.queries import lastmile_category as lastmile_category_queries
-from app.queries import lastmile_product as lastmile_product_queries
-from app.queries import products as product_queries
-from app.queries.base import save_entity
-from app.scraper.lastmile.types import (
+from src.models.lastmile_category import LastMileCategory
+from src.models.lastmile_product import LastMileProduct
+from src.models.products import Product
+from src.models.store import Store
+from src.queries import lastmile_category as lastmile_category_queries
+from src.queries import lastmile_product as lastmile_product_queries
+from src.queries import products as product_queries
+from src.queries.base import save_entity
+from src.scraper.lastmile.types import (
     LastMileCategoriesResponse,
     LastMileProductPayload,
 )

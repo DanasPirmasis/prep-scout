@@ -7,8 +7,8 @@ from contextlib import AbstractContextManager
 from oxylabs import RealtimeClient
 from sqlmodel import Session
 
-from app.scraper.lastmile import request, save
-from app.scraper.lastmile.types import LastMileCategoriesResponse, LastMileProductsResponse
+from src.scraper.lastmile import request, save
+from src.scraper.lastmile.types import LastMileCategoriesResponse, LastMileProductsResponse
 
 logger = logging.getLogger(__name__)
 

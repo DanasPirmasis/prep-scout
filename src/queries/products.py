@@ -1,7 +1,7 @@
 from sqlmodel import Session, col, select
 
-from app.models.products import Product
-from app.models.store import Store
+from src.models.products import Product
+from src.models.store import Store
 
 
 def get_by_external_id(session: Session, *, external_id: str, store: Store) -> Product | None:

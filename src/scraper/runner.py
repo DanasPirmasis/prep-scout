@@ -3,9 +3,9 @@ import os
 
 from oxylabs import RealtimeClient
 
-from app.scraper.exceptions import MissingCredentialsError
-from app.scraper.lastmile.scraper import scrape_lastmile
-from app.session import session_scope
+from src.scraper.exceptions import MissingCredentialsError
+from src.scraper.lastmile.scraper import scrape_lastmile
+from src.session import session_scope
 
 logger = logging.getLogger(__name__)
 

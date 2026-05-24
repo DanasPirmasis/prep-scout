@@ -4,7 +4,7 @@ from typing import Any
 
 from oxylabs import RealtimeClient
 
-from app.scraper.exceptions import EmptyResponseError
+from src.scraper.exceptions import EmptyResponseError
 
 
 def post_json(client: RealtimeClient, url: str, body: dict[str, Any]) -> str | None:
