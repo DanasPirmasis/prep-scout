@@ -3,6 +3,7 @@ from sqlmodel import Session
 from app.models.lastmile_category import LastMileCategory
 from app.models.lastmile_product import LastMileProduct
 from app.models.products import Product
+from app.models.store import Store
 from app.queries import lastmile_category as lastmile_category_queries
 from app.queries import lastmile_product as lastmile_product_queries
 from app.queries import products as product_queries
@@ -13,13 +14,13 @@ from app.scraper.lastmile.types import (
 
 
 def product(session: Session, data: LastMileProductPayload) -> None:
-    existing_product = product_queries.get_by_external_id(session, external_id=data.id, store="lastmile")
+    existing_product = product_queries.get_by_external_id(session, external_id=data.id, store=Store.LASTMILE)
     if existing_product is None:
         product_queries.save_product(
             session,
             Product(
                 external_id=data.id,
-                store="lastmile",
+                store=Store.LASTMILE,
                 name=data.name.lt,
                 brand=None,
                 category=data.category_id,
@@ -28,8 +29,6 @@ def product(session: Session, data: LastMileProductPayload) -> None:
                 price=data.actual_price,
             ),
         )
-
-    pass
 
 
 def last_mile_product(session: Session, payload: LastMileProductPayload) -> None:
