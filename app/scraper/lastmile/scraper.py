@@ -1,13 +1,14 @@
 import logging
 from collections import deque
 from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import AbstractContextManager
 
 from oxylabs import RealtimeClient
 from sqlmodel import Session
 
 from app.scraper.lastmile import request, save
-from app.scraper.lastmile.types import LastMileCategoriesResponse
+from app.scraper.lastmile.types import LastMileCategoriesResponse, LastMileProductsResponse
 
 logger = logging.getLogger(__name__)
 
@@ -25,20 +26,29 @@ def scrape_lastmile(session_factory: SessionFactory, client: RealtimeClient) -> 
     total_categories = len(category_tree)
     if total_categories == 0:
         return
-    scraped_categories = 0
 
-    for scraped_categories, parent_id in enumerate(category_tree, start=1):
-        # TODO: this should execute all of the requests at the same time.
-        products_response = request.get_products_in_category(client, parent_id)
-        for entry in products_response.products:
-            product = entry.front_end_product
-            with session_factory() as session:
-                save.last_mile_product(session, product)
-                save.product(session, product)
-        _log_completeness(scraped_categories, total_categories)
+    with ThreadPoolExecutor(max_workers=total_categories) as executor:
+        products_by_category = {
+            executor.submit(request.get_products_in_category, client, parent_id): parent_id
+            for parent_id in category_tree
+        }
+        for scraped_categories, future in enumerate(as_completed(products_by_category), start=1):
+            parent_id = products_by_category[future]
+            products_response = future.result()
+            _save_products(session_factory, products_response)
+            logger.info("Scraped LastMile category %s", parent_id)
+            _log_completeness(scraped_categories, total_categories)
 
 
-def _log_completeness(scraped_categories: int, total_categories: int):
+def _save_products(session_factory: SessionFactory, products_response: LastMileProductsResponse) -> None:
+    for entry in products_response.products:
+        product = entry.front_end_product
+        with session_factory() as session:
+            save.last_mile_product(session, product)
+            save.product(session, product)
+
+
+def _log_completeness(scraped_categories: int, total_categories: int) -> None:
     completeness = (scraped_categories / total_categories) * 100
 
     logger.info(
