@@ -21,7 +21,7 @@ def scrape_lastmile(session: Session, client: RealtimeClient) -> None:
     if total_categories == 0:
         return
 
-    with ThreadPoolExecutor(max_workers=total_categories) as executor:
+    with ThreadPoolExecutor(max_workers=2) as executor:
         products_by_category = {
             executor.submit(request.get_products_in_category, client, parent_id): parent_id
             for parent_id in category_tree
@@ -39,17 +39,6 @@ def _save_products(session: Session, products_response: LastMileProductsResponse
         product = entry.front_end_product
         save.last_mile_product(session, product)
         save.product(session, product)
-
-
-def _log_completeness(scraped_categories: int, total_categories: int) -> None:
-    completeness = (scraped_categories / total_categories) * 100
-
-    logger.info(
-        "Scraped %d/%d categories (%.1f%%)",
-        scraped_categories,
-        total_categories,
-        completeness,
-    )
 
 
 def _build_category_tree(data: LastMileCategoriesResponse) -> dict[str, list[str]]:
@@ -76,3 +65,14 @@ def _build_category_tree(data: LastMileCategoriesResponse) -> dict[str, list[str
         category_tree[top_level_category.id] = all_descendant_ids
 
     return category_tree
+
+
+def _log_completeness(scraped_categories: int, total_categories: int) -> None:
+    completeness = (scraped_categories / total_categories) * 100
+
+    logger.info(
+        "Scraped %d/%d categories (%.1f%%)",
+        scraped_categories,
+        total_categories,
+        completeness,
+    )

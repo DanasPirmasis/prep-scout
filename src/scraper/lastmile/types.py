@@ -33,11 +33,11 @@ class ProductPrice(BaseModel):
     p: float | None
     s: float | None
     l: float | None  # noqa: E741
-    still: float | None
+    still: str | None
     ltill: str | None
     ap: float | None
     lap: float | None
-    lstill: float | None
+    lstill: str | None
 
 
 class ProductDimensions(BaseModel):
@@ -124,7 +124,7 @@ class LastMileProductPayload(BaseModel):
     promo: dict | None
     promo_tags: dict
     slugs: list[str]
-    standard_order_quantity: int
+    standard_order_quantity: float
     store_ids: list[str]
     supplier: str
     tags: list

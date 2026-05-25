@@ -36,7 +36,7 @@ class LastMileProduct(SQLModel, table=True):
     promo: str | None = None
     promo_tags: str
     slugs: str
-    standard_order_quantity: int
+    standard_order_quantity: float
     store_ids: str
     supplier: str
     tags: str

@@ -38,7 +38,6 @@ def test_lastmile_categories_are_processed_and_saved(session: Session) -> None:
     response = LastMileCategoriesResponse.model_validate_json(CATEGORIES_FIXTURE.read_text())
     expected_category = response.data[0]
 
-    print(response.count)
     save.categories(session, response)
 
     category_count = session.exec(select(func.count()).select_from(LastMileCategory)).one()
