@@ -28,7 +28,13 @@ def scrape_lastmile(session: Session, client: RealtimeClient) -> None:
         }
         for scraped_categories, future in enumerate(as_completed(products_by_category), start=1):
             parent_id = products_by_category[future]
-            products_response = future.result()
+            try:
+                products_response = future.result()
+            except Exception:
+                logger.exception("Failed to scrape LastMile category %s", parent_id)
+                _log_completeness(scraped_categories, total_categories)
+                continue
+
             _save_products(session, products_response)
             logger.info("Scraped LastMile category %s", parent_id)
             _log_completeness(scraped_categories, total_categories)
