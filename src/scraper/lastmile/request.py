@@ -48,7 +48,6 @@ def get_products_in_category(client: RealtimeClient, parent_id: str) -> LastMile
             "sort": "karma",
             "isUsingStock": True,
         },
-        "limit": 3,  # This is intentional and does not limit anything
     }
 
     raw_content = oxylabs.post_json(
